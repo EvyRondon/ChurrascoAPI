@@ -30,7 +30,16 @@ namespace ChurrascoAPI.Controllers
       if (evt == null)
         return NotFound();
 
-      return Ok(evt);
+      var totalParticipants = evt.participant;
+
+      return Ok(totalParticipants);
+    }
+
+    [HttpGet("ObterPorNome")]
+    public IActionResult ObterPorNome(string descript)
+    {
+      var eventos = _context.Events.Where(x => x.description.Contains(descript));
+      return Ok(eventos);
     }
 
     [HttpPut("{id}")]
@@ -45,23 +54,6 @@ namespace ChurrascoAPI.Controllers
       evtBd.description = evt.description;
       evtBd.moreInformations = evt.moreInformations;
       evtBd.participant = evt.participant;
-
-      _context.Events.Update(evtBd);
-      _context.SaveChanges();
-
-      return Ok(evtBd);
-    }
-
-    [HttpPatch("{idEvt}, {idPart}")]
-    public IActionResult UpdateParticipant(int idEvt, int idPart)
-    {
-      var evtBd = _context.Events.Find(idEvt);
-      var partBd = _context.Participants.Find(idPart);
-
-      if (evtBd == null || partBd == null)
-        return NotFound();
-
-      evtBd.participant.Add(partBd);
 
       _context.Events.Update(evtBd);
       _context.SaveChanges();
